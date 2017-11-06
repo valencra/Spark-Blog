@@ -3,6 +3,7 @@ package com.teamtreehouse.blog.model;
 import com.github.slugify.Slugify;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -47,6 +48,14 @@ public class BlogEntry {
 
     public Date getDate() {
         return date;
+    }
+
+    public String getDateAttribute() {
+        return new SimpleDateFormat("yyyy-MM-dd H:MM").format(date);
+    }
+
+    public String getDateText() {
+        return new SimpleDateFormat("MMMMM dd, yyyy 'at' h:mm").format(date);
     }
 
     public List<Comment> getComments() {
