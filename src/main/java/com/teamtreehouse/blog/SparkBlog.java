@@ -1,28 +1,54 @@
 package com.teamtreehouse.blog;
 
+import com.sun.tools.internal.xjc.model.Model;
 import com.teamtreehouse.blog.dao.BlogDAO;
 import com.teamtreehouse.blog.dao.BlogDAOImpl;
 import com.teamtreehouse.blog.model.Entry;
 import spark.ModelAndView;
+import spark.Request;
 import spark.template.handlebars.HandlebarsTemplateEngine;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static spark.Spark.get;
-import static spark.Spark.staticFileLocation;
+import static spark.Spark.*;
 
 public class SparkBlog {
+    private static final String FLASH_MESSAGE_KEY = "flash_message";
+
     public static void main(String[] args) {
+        // initializations
         staticFileLocation("/public");
         BlogDAO blogDAO = new BlogDAOImpl();
         generateInitialEntries(blogDAO);
+        String adminPassword = "admin";
+
+        // save password cookie as request attribute, if it exists
+        before((req, res) -> {
+            if (req.cookie("password") != null) {
+                req.attribute("password", req.cookie("password"));
+            }
+        });
+
+        before("/add", (req, res) -> {
+            if (req.attribute("password") == null) {
+                setFlashMessage(req, "Administrator privileges required. Please provide password.");
+                res.redirect("/password");
+            }
+        });
+
+        before("/edit", (req, res) -> {
+            if (req.attribute("password") == null) {
+                setFlashMessage(req, "Administrator privileges required. Please provide password.");
+                res.redirect("/password");
+            }
+        });
 
         // home page
         get("/", (req, res) -> {
             Map<String, Object> model = new HashMap<>();
+            model.put("flashMessage", captureFlashMessage(req));
             model.put("entries", blogDAO.findAllEntries());
-            System.out.println(model);
             return new ModelAndView(model, "index.hbs");
         }, new HandlebarsTemplateEngine());
 
@@ -32,6 +58,53 @@ public class SparkBlog {
             model.put("entry", blogDAO.findEntryBySlug(req.params("slug")));
             return new ModelAndView(model, "detail.hbs");
         }, new HandlebarsTemplateEngine());
+
+        // password page
+        get("/password", (req, res) -> {
+           Map<String, String> model = new HashMap<>();
+           model.put("flashMessage", captureFlashMessage(req));
+           return new ModelAndView(model, "password.hbs");
+        }, new HandlebarsTemplateEngine());
+
+        post("/password", (req, res) -> {
+            Map<String, String> model = new HashMap<>();
+            String password = req.queryParams("password");
+            // non-administrator password provided
+            if (!password.equals(adminPassword)) {
+                setFlashMessage(req, "Invalid password. Please provide password.");
+                res.redirect("/password");
+            }
+            // administrator password provided
+            else {
+                // set password cookie only if admin password is provided
+                res.cookie("password", password);
+                setFlashMessage(req, "Administrator privileges granted.");
+                res.redirect("/");
+            }
+            return null;
+        });
+    }
+
+    private static void setFlashMessage(Request req, String message) {
+        req.session().attribute(FLASH_MESSAGE_KEY, message);
+    }
+
+    private static String getFlashMessage(Request req) {
+        if (req.session(false) == null) {
+            return null;
+        }
+        if (!req.session().attributes().contains(FLASH_MESSAGE_KEY)) {
+            return null;
+        }
+        return (String) req.session().attribute(FLASH_MESSAGE_KEY);
+    }
+
+    private static String captureFlashMessage(Request req) {
+        String message = getFlashMessage(req);
+        if (message!=null) {
+            req.session().removeAttribute(FLASH_MESSAGE_KEY);
+        }
+        return message;
     }
 
     public static BlogDAO generateInitialEntries(BlogDAO blogDAO) {
