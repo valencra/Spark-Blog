@@ -1,11 +1,11 @@
 package com.teamtreehouse.blog.dao;
 
-import com.teamtreehouse.blog.model.BlogEntry;
+import com.teamtreehouse.blog.model.Entry;
 
 import java.util.List;
 
 public interface BlogDAO {
-    boolean addEntry(BlogEntry blogEntry);
-    List<BlogEntry> findAllEntries();
-    BlogEntry findEntryBySlug(String slug);
+    boolean addEntry(Entry entry);
+    List<Entry> findAllEntries();
+    Entry findEntryBySlug(String slug);
 }

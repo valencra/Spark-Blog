@@ -1,31 +1,31 @@
 package com.teamtreehouse.blog.dao;
 
 import com.teamtreehouse.blog.exception.NotFoundException;
-import com.teamtreehouse.blog.model.BlogEntry;
+import com.teamtreehouse.blog.model.Blog;
+import com.teamtreehouse.blog.model.Entry;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class BlogDAOImpl implements BlogDAO {
-    private List<BlogEntry> entries;
+    private Blog blog;
 
     public BlogDAOImpl() {
-        entries = new ArrayList<>();
+        blog = new Blog();
     }
 
     @Override
-    public boolean addEntry(BlogEntry blogEntry) {
-        return entries.add(blogEntry);
+    public boolean addEntry(Entry entry) {
+        return blog.addEntry(entry);
     }
 
     @Override
-    public List<BlogEntry> findAllEntries() {
-        return entries;
+    public List<Entry> findAllEntries() {
+        return blog.getEntries();
     }
 
     @Override
-    public BlogEntry findEntryBySlug(String slug) {
-        return entries.stream()
+    public Entry findEntryBySlug(String slug) {
+        return blog.getEntries().stream()
                 .filter(entry -> entry.getSlug().equals(slug))
                 .findFirst()
                 .orElseThrow(NotFoundException::new);

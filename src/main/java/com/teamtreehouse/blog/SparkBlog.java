@@ -2,7 +2,7 @@ package com.teamtreehouse.blog;
 
 import com.teamtreehouse.blog.dao.BlogDAO;
 import com.teamtreehouse.blog.dao.BlogDAOImpl;
-import com.teamtreehouse.blog.model.BlogEntry;
+import com.teamtreehouse.blog.model.Entry;
 import spark.ModelAndView;
 import spark.template.handlebars.HandlebarsTemplateEngine;
 
@@ -12,7 +12,7 @@ import java.util.Map;
 import static spark.Spark.get;
 import static spark.Spark.staticFileLocation;
 
-public class Blog {
+public class SparkBlog {
     public static void main(String[] args) {
         staticFileLocation("/public");
         BlogDAO blogDAO = new BlogDAOImpl();
@@ -25,12 +25,19 @@ public class Blog {
             System.out.println(model);
             return new ModelAndView(model, "index.hbs");
         }, new HandlebarsTemplateEngine());
+
+        // details page
+        get("/entries/:slug", (req, res) -> {
+            Map<String, Object> model = new HashMap<>();
+            model.put("entry", blogDAO.findEntryBySlug(req.params("slug")));
+            return new ModelAndView(model, "detail.hbs");
+        }, new HandlebarsTemplateEngine());
     }
 
     public static BlogDAO generateInitialEntries(BlogDAO blogDAO) {
         // add three dummy initial entries
         // entry with 1 tag
-        BlogEntry entry1 = new BlogEntry(
+        Entry entry1 = new Entry(
                 "First Entry",
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Dolor purus non enim praesent elementum facilisis. Erat velit scelerisque in dictum non consectetur. Ultrices neque ornare aenean euismod. Lectus arcu bibendum at varius vel pharetra vel. Eu volutpat odio facilisis mauris sit amet. Leo urna molestie at elementum eu facilisis sed odio morbi. Bibendum arcu vitae elementum curabitur vitae nunc. Ut tristique et egestas quis ipsum suspendisse ultrices gravida dictum. Viverra accumsan in nisl nisi scelerisque eu ultrices vitae. Turpis cursus in hac habitasse. In aliquam sem fringilla ut. Morbi tristique senectus et netus et malesuada fames ac.\n" +
                         "\n" +
@@ -40,7 +47,7 @@ public class Blog {
         blogDAO.addEntry(entry1);
 
         // entry with multiple tags
-        BlogEntry entry2 = new BlogEntry(
+        Entry entry2 = new Entry(
                 "Second Entry",
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Hendrerit gravida rutrum quisque non tellus orci ac auctor augue. Vestibulum lectus mauris ultrices eros in. Accumsan sit amet nulla facilisi. Congue nisi vitae suscipit tellus mauris a. Proin nibh nisl condimentum id venenatis a condimentum vitae. Dui id ornare arcu odio ut sem nulla. Nisl purus in mollis nunc. Gravida in fermentum et sollicitudin ac orci phasellus. Sit amet nulla facilisi morbi tempus iaculis urna. Ullamcorper eget nulla facilisi etiam dignissim diam quis enim. Ac feugiat sed lectus vestibulum mattis ullamcorper. Aliquet eget sit amet tellus cras adipiscing enim eu. Nibh tortor id aliquet lectus proin nibh nisl.\n" +
                         "\n" +
@@ -53,8 +60,8 @@ public class Blog {
         entry2.addTag("Tag 1");
         blogDAO.addEntry(entry2);
 
-        // en
-        BlogEntry entry3 = new BlogEntry(
+        // entry with no tags
+        Entry entry3 = new Entry(
                 "Third Entry",
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Scelerisque eu ultrices vitae auctor eu augue ut lectus arcu. Lectus magna fringilla urna porttitor rhoncus. Senectus et netus et malesuada fames ac. Egestas maecenas pharetra convallis posuere morbi leo. Tincidunt eget nullam non nisi est sit amet facilisis. Parturient montes nascetur ridiculus mus mauris. Scelerisque fermentum dui faucibus in ornare quam viverra orci sagittis. Nunc id cursus metus aliquam eleifend mi in nulla posuere. Velit dignissim sodales ut eu sem integer vitae. Scelerisque purus semper eget duis. Proin nibh nisl condimentum id venenatis a. Blandit turpis cursus in hac habitasse.\n" +
                         "\n" +

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class BlogEntry {
+public class Entry {
     private String title;
     private String body;
     private Date date;
@@ -16,7 +16,7 @@ public class BlogEntry {
     private List<String> tags;
     private String slug;
 
-    public BlogEntry(String title, String body) {
+    public Entry(String title, String body) {
         this.title = title;
         this.body = body;
         date = new Date();
@@ -83,14 +83,14 @@ public class BlogEntry {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        BlogEntry blogEntry = (BlogEntry) o;
+        Entry entry = (Entry) o;
 
-        if (title != null ? !title.equals(blogEntry.title) : blogEntry.title != null) return false;
-        if (body != null ? !body.equals(blogEntry.body) : blogEntry.body != null) return false;
-        if (date != null ? !date.equals(blogEntry.date) : blogEntry.date != null) return false;
-        if (comments != null ? !comments.equals(blogEntry.comments) : blogEntry.comments != null) return false;
-        if (tags != null ? !tags.equals(blogEntry.tags) : blogEntry.tags != null) return false;
-        return slug != null ? slug.equals(blogEntry.slug) : blogEntry.slug == null;
+        if (title != null ? !title.equals(entry.title) : entry.title != null) return false;
+        if (body != null ? !body.equals(entry.body) : entry.body != null) return false;
+        if (date != null ? !date.equals(entry.date) : entry.date != null) return false;
+        if (comments != null ? !comments.equals(entry.comments) : entry.comments != null) return false;
+        if (tags != null ? !tags.equals(entry.tags) : entry.tags != null) return false;
+        return slug != null ? slug.equals(entry.slug) : entry.slug == null;
     }
 
     @Override

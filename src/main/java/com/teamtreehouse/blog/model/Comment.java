@@ -1,5 +1,6 @@
 package com.teamtreehouse.blog.model;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Comment {
@@ -31,6 +32,14 @@ public class Comment {
 
     public Date getDate() {
         return date;
+    }
+
+    public String getDateAttribute() {
+        return new SimpleDateFormat("yyyy-MM-dd H:MM").format(date);
+    }
+
+    public String getDateText() {
+        return new SimpleDateFormat("MMMMM dd, yyyy 'at' h:mm").format(date);
     }
 
     @Override
