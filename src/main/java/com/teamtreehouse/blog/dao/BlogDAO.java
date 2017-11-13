@@ -6,6 +6,10 @@ import java.util.List;
 
 public interface BlogDAO {
     boolean addEntry(Entry entry);
+
+    boolean deleteEntry(Entry entry);
+
     List<Entry> findAllEntries();
+
     Entry findEntryBySlug(String slug);
 }

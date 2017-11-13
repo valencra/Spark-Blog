@@ -19,6 +19,11 @@ public class BlogDAOImpl implements BlogDAO {
     }
 
     @Override
+    public boolean deleteEntry(Entry entry) {
+        return blog.deleteEntry(entry);
+    }
+
+    @Override
     public List<Entry> findAllEntries() {
         return blog.getEntries();
     }

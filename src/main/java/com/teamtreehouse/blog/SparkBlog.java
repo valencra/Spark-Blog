@@ -112,6 +112,14 @@ public class SparkBlog {
             res.redirect("/");
             return null;
         });
+
+        // delete entry
+        post("/delete/entries/:slug", (req, res) -> {
+            Entry entry = blogDAO.findEntryBySlug(req.params("slug"));
+            blogDAO.deleteEntry(entry);
+            res.redirect("/");
+            return null;
+        });
     }
 
     private static void setFlashMessage(Request req, String message) {

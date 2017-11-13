@@ -17,4 +17,8 @@ public class Blog {
     public List<Entry> getEntries() {
         return entries;
     }
+
+    public boolean deleteEntry(Entry entry) {
+        return entries.remove(entry);
+    }
 }
