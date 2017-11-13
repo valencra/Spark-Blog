@@ -99,9 +99,19 @@ public class SparkBlog {
         });
 
         // edit entry
-        get("/edit", (req, res) -> {
-            return new ModelAndView(null, "edit.hbs");
+        get("/edit/:slug", (req, res) -> {
+            Map<String, Object> model = new HashMap<>();
+            model.put("entry", blogDAO.findEntryBySlug(req.params("slug")));
+            return new ModelAndView(model, "edit.hbs");
         }, new HandlebarsTemplateEngine());
+
+        post("/entries/:slug", (req, res) -> {
+            Entry entry = blogDAO.findEntryBySlug(req.params("slug"));
+            entry.setTitle(req.queryParams("title"));
+            entry.setBody(req.queryParams("body"));
+            res.redirect("/");
+            return null;
+        });
     }
 
     private static void setFlashMessage(Request req, String message) {
