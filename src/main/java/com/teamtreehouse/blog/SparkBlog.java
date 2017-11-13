@@ -30,20 +30,6 @@ public class SparkBlog {
             }
         });
 
-        before("/add", (req, res) -> {
-            if (req.attribute("password") == null) {
-                setFlashMessage(req, "Administrator privileges required. Please provide password.");
-                res.redirect("/password");
-            }
-        });
-
-        before("/edit", (req, res) -> {
-            if (req.attribute("password") == null) {
-                setFlashMessage(req, "Administrator privileges required. Please provide password.");
-                res.redirect("/password");
-            }
-        });
-
         // blog home
         get("/", (req, res) -> {
             Map<String, Object> model = new HashMap<>();
@@ -85,11 +71,18 @@ public class SparkBlog {
         });
 
         // add entry
-        get("/add", (req, res) -> {
+        before("/add/entries", (req, res) -> {
+            if (req.attribute("password") == null) {
+                setFlashMessage(req, "Administrator privileges required. Please provide password.");
+                res.redirect("/password");
+            }
+        });
+
+        get("/add/entries", (req, res) -> {
             return new ModelAndView(null, "new.hbs");
         }, new HandlebarsTemplateEngine());
 
-        post("/entries", (req, res) -> {
+        post("/add/entries", (req, res) -> {
             String title = req.queryParams("title");
             String body = req.queryParams("body");
             Entry newEntry = new Entry(title, body);
@@ -99,13 +92,20 @@ public class SparkBlog {
         });
 
         // edit entry
-        get("/edit/:slug", (req, res) -> {
+        before("/edit/entries/:slug", (req, res) -> {
+            if (req.attribute("password") == null) {
+                setFlashMessage(req, "Administrator privileges required. Please provide password.");
+                res.redirect("/password");
+            }
+        });
+
+        get("/edit/entries/:slug", (req, res) -> {
             Map<String, Object> model = new HashMap<>();
             model.put("entry", blogDAO.findEntryBySlug(req.params("slug")));
             return new ModelAndView(model, "edit.hbs");
         }, new HandlebarsTemplateEngine());
 
-        post("/entries/:slug", (req, res) -> {
+        post("/edit/entries/:slug", (req, res) -> {
             Entry entry = blogDAO.findEntryBySlug(req.params("slug"));
             entry.setTitle(req.queryParams("title"));
             entry.setBody(req.queryParams("body"));
