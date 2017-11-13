@@ -44,7 +44,7 @@ public class SparkBlog {
             }
         });
 
-        // home page
+        // blog home
         get("/", (req, res) -> {
             Map<String, Object> model = new HashMap<>();
             model.put("flashMessage", captureFlashMessage(req));
@@ -52,18 +52,18 @@ public class SparkBlog {
             return new ModelAndView(model, "index.hbs");
         }, new HandlebarsTemplateEngine());
 
-        // details page
+        // entry details
         get("/entries/:slug", (req, res) -> {
             Map<String, Object> model = new HashMap<>();
             model.put("entry", blogDAO.findEntryBySlug(req.params("slug")));
             return new ModelAndView(model, "detail.hbs");
         }, new HandlebarsTemplateEngine());
 
-        // password page
+        // password
         get("/password", (req, res) -> {
-           Map<String, String> model = new HashMap<>();
-           model.put("flashMessage", captureFlashMessage(req));
-           return new ModelAndView(model, "password.hbs");
+            Map<String, String> model = new HashMap<>();
+            model.put("flashMessage", captureFlashMessage(req));
+            return new ModelAndView(model, "password.hbs");
         }, new HandlebarsTemplateEngine());
 
         post("/password", (req, res) -> {
@@ -83,6 +83,25 @@ public class SparkBlog {
             }
             return null;
         });
+
+        // add entry
+        get("/add", (req, res) -> {
+            return new ModelAndView(null, "new.hbs");
+        }, new HandlebarsTemplateEngine());
+
+        post("/entries", (req, res) -> {
+            String title = req.queryParams("title");
+            String body = req.queryParams("body");
+            Entry newEntry = new Entry(title, body);
+            blogDAO.addEntry(newEntry);
+            res.redirect("/");
+            return null;
+        });
+
+        // edit entry
+        get("/edit", (req, res) -> {
+            return new ModelAndView(null, "edit.hbs");
+        }, new HandlebarsTemplateEngine());
     }
 
     private static void setFlashMessage(Request req, String message) {
