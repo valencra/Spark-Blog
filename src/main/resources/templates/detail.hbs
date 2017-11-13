@@ -30,11 +30,11 @@
                 </div>
             {{/each}}
             <div class="new-comment">
-                <form>
-                    <label for="name"> Name</label>
-                    <input type="text" name="name"><br>
+                <form action="/add/comments/{{ entry.slug }}" method="post">
+                    <label for="name">Author</label>
+                    <input type="text" name="author"><br>
                     <label for="comment">Comment</label>
-                    <textarea rows="5" name="comment"></textarea>
+                    <textarea rows="5" name="body"></textarea>
                     <input type="submit" value="Post Comment" class="button">
                 </form>
             </div>

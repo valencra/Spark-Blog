@@ -3,6 +3,7 @@ package com.teamtreehouse.blog;
 import com.sun.tools.internal.xjc.model.Model;
 import com.teamtreehouse.blog.dao.BlogDAO;
 import com.teamtreehouse.blog.dao.BlogDAOImpl;
+import com.teamtreehouse.blog.model.Comment;
 import com.teamtreehouse.blog.model.Entry;
 import spark.ModelAndView;
 import spark.Request;
@@ -118,6 +119,20 @@ public class SparkBlog {
             Entry entry = blogDAO.findEntryBySlug(req.params("slug"));
             blogDAO.deleteEntry(entry);
             res.redirect("/");
+            return null;
+        });
+
+        // add entry comments
+        post("/add/comments/:slug", (req, res) -> {
+            String author = req.queryParams("author");
+            if (author.trim() == "" || author.length() == 0) {
+                author = "Anonymous";
+            }
+            String body = req.queryParams("body");
+            Comment comment = new Comment(author, body);
+            Entry entry = blogDAO.findEntryBySlug(req.params("slug"));
+            entry.addComment(comment);
+            res.redirect(String.format("/entries/%s", req.params("slug")));
             return null;
         });
     }
